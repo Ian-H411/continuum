@@ -9,82 +9,76 @@
 import UIKit
 
 class PostDetailTableViewController: UITableViewController {
-
+    
+    @IBOutlet weak var postImageView: UIImageView!
+    
+    @IBOutlet weak var captionLabel: UILabel!
+    
+    var landingPad: Post?{
+        didSet{
+            updateViews()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-
+    
     // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        guard let post = landingPad else {return 0}
+        return post.comments.count
     }
-
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: "commentCell", for: indexPath)
+        guard let post = landingPad else {return UITableViewCell()}
+        let comment = post.comments[indexPath.row]
+        cell.textLabel?.text = comment.text
+        cell.detailTextLabel?.text = "\(comment.timeStamp)"
         return cell
     }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    
+    //MARK: - Helper
+    
+    func updateViews(){
+        loadViewIfNeeded()
+        guard let post = landingPad else {return}
+        guard let image = post.photo else {return}
+        postImageView.image = image
+        captionLabel.text = post.caption
+        tableView.reloadData()
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    
+    func addCommentAlert(){
+        let alert = UIAlertController(title: "Add a Comment", message: "add a comment to this post", preferredStyle: .alert)
+        alert.addTextField { (text) in
+            text.placeholder = "write a comment"
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (_) in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        let alertAddAction = UIAlertAction(title: "add", style: .default) { (_) in
+            guard let comment = alert.textFields?.first?.text, !comment.isEmpty, let post = self.landingPad else {return}
+                PostController.sharedInstance.addComment(with: post, text: comment, completion: { (comment) in
+                })
+        self.tableView.reloadData()
+        }
+        alert.addAction(cancelAction)
+        alert.addAction(alertAddAction)
+        self.present(alert, animated: true)
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+    
+    //MARK: - Actions
+    
+    @IBAction func commentButtonTapped(_ sender: Any) {
+        addCommentAlert()
     }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
+    
+    @IBAction func shareButtonTapped(_ sender: Any) {
     }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    @IBAction func followButtonTapped(_ sender: Any) {
     }
-    */
-
 }
