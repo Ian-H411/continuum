@@ -121,7 +121,7 @@ class PostController{
         }
     }
     
-    func subscribeToNewPosts(completion: (Bool, Error?) -> Void){
+    func subscribeToNewPosts(completion: @escaping (Bool, Error?) -> Void){
         let predicate = NSPredicate(value: true)
         let subscription = CKQuerySubscription(recordType: postKeys.postObjectKey, predicate: predicate, options: .firesOnRecordCreation)
         let notification = CKSubscription.NotificationInfo()
@@ -135,5 +135,20 @@ class PostController{
                 
             }
         }
+    }
+    
+    func subscribeToComments(post: Post, completion: @escaping (Bool, Error?) -> Void){
+        let predicate = NSPredicate(format: "%K == %@", argumentArray: [commentKeys.postReferenceKey, post.recordID])
+        let subscription = CKQuerySubscription(recordType: commentKeys.commentObjectKey, predicate: predicate, options: .firesOnRecordCreation)
+        let notification = CKSubscription.NotificationInfo()
+        notification.alertBody = "someone else commented"
+        notification.soundName = "default"
+        subscription.notificationInfo = notification
+        publicDB.save(subscription) { (record, error) in
+            if let error = error{
+                print("there was an error in \(#function) :\(error) : \(error.localizedDescription)")
+            }
+        }
+        
     }
 }
