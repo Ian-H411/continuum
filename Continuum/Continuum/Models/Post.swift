@@ -19,7 +19,7 @@ struct postKeys {
     static let recordIDKey = "ckRecordID"
     static let imageAssestKey = "ckImageAssest"
     static let commentKey = "comments"
-    static let commentCountKey = "commentKey"
+    static let commentCountKey = "commentCount"
 
 }
 

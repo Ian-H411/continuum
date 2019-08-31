@@ -7,6 +7,7 @@
 //
 import CloudKit
 import UIKit
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,6 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         checkIfSignedInICloud { (success) in
             let fetchedUserStatment = success ? "Successfully retrieved a logged in user" : "Failed to retrieve a logged in user"
             print(fetchedUserStatment)
+        }
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+            if let error = error{
+                print("there was an error in \(#function) :\(error) : \(error.localizedDescription)")
+            } else {
+                application.registerForRemoteNotifications()
+            }
         }
         return true
     }

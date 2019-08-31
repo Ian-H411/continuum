@@ -23,6 +23,21 @@ class PostController{
     //MARK: - CREATE
     
     func addComment(with post: Post, text: String, completion: @escaping (Comment?) -> Void ){
+        post.commentCount += 1
+        
+        guard let record = CKRecord(post: post) else {return}
+        
+        let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
+        
+        operation.savePolicy = .changedKeys
+        
+        operation.qualityOfService = .userInitiated
+        
+        operation.completionBlock = {
+            print("Post Updated")
+        }
+        publicDB.add(operation)
+        
         let newComment = Comment(text: text, post: post)
         let commentRecord = CKRecord(comment: newComment)
         publicDB.save(commentRecord) { (recordOptional, error) in
@@ -103,6 +118,22 @@ class PostController{
             post.comments = newComments
             completion(newComments)
             return
+        }
+    }
+    
+    func subscribeToNewPosts(completion: (Bool, Error?) -> Void){
+        let predicate = NSPredicate(value: true)
+        let subscription = CKQuerySubscription(recordType: postKeys.postObjectKey, predicate: predicate, options: .firesOnRecordCreation)
+        let notification = CKSubscription.NotificationInfo()
+        notification.alertBody = "hey look some new posts"
+        notification.soundName = "default"
+        subscription.notificationInfo = notification
+        
+        publicDB.save(subscription) { (ckrecord, error) in
+            if let error = error{
+                print("there was an error in \(#function) :\(error) : \(error.localizedDescription)")
+                
+            }
         }
     }
 }
