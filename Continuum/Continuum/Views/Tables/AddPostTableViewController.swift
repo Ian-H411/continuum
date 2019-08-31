@@ -8,36 +8,24 @@
 
 import UIKit
 
-class AddPostTableViewController: UITableViewController {
+class AddPostTableViewController: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
     @IBOutlet weak var captionTextField: UITextField!
     
-    @IBOutlet weak var postImage: UIImageView!
-    
-    @IBOutlet weak var buttonLabel: UIButton!
+    var landingPad: UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-
-
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(true)
         captionTextField.text = ""
-        postImage.image = nil
-        buttonLabel.setTitle("select Photo", for: .focused)
-        
-    }
-
-
-    @IBAction func addPhotoButtonTapped(_ sender: Any) {
-        postImage.image = UIImage(named: "frodoPhoto")
+     
     }
     
     @IBAction func addPostButtonTapped(_ sender: Any) {
-        if postImage.image != nil && captionTextField.text != ""{
-            guard let image = postImage.image else {return}
+        if landingPad != nil && captionTextField.text != ""{
+            guard let image = landingPad else {return}
             guard let text = captionTextField.text else {return}
             PostController.sharedInstance.createPostWith(caption:text, picture: image) { (post) in
                 
@@ -45,7 +33,18 @@ class AddPostTableViewController: UITableViewController {
             self.tabBarController?.selectedIndex = 0
         }
     }
-    @IBAction func cancelButtonTapped(_ sender: Any) {
-        self.tabBarController?.selectedIndex = 0
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "photopick"{
+            if let destinationvc = segue.destination as? PhotoSelectorViewController{
+                destinationvc.delegate = self
+            }
+        }
+        
+    }
+}
+extension AddPostTableViewController: PhotoSelectorViewControllerDelegate{
+    func photoSelectorViewControllerSelected(image: UIImage) {
+        landingPad = image
     }
 }

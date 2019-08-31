@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit.UIImage
+import CloudKit
 
 class PostController{
     
@@ -15,17 +16,93 @@ class PostController{
     
     var posts = [Post]()
     
+    let publicDB = CKContainer.default().publicCloudDatabase
+    
     //crud
     
     //MARK: - CREATE
     
-    func addComment(with post: Post, text: String, completion: @escaping (Comment) -> Void ){
+    func addComment(with post: Post, text: String, completion: @escaping (Comment?) -> Void ){
         let newComment = Comment(text: text, post: post)
-        post.comments.append(newComment)
+        let commentRecord = CKRecord(comment: newComment)
+        publicDB.save(commentRecord) { (recordOptional, error) in
+            if let error = error{
+                print("there was an error in \(#function) :\(error) : \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            guard let record = recordOptional else {completion(nil); return}
+            guard let newComment = Comment(ckRecord: record, post: post) else {completion(nil);return}
+            post.comments.append(newComment)
+            completion(newComment)
+            return
+        }
+        
     }
     
     func createPostWith(caption: String, picture: UIImage, completion: @escaping (Post?) ->Void){
       let newPost =  Post(caption: caption, comments: [], photo: picture)
-        posts.append(newPost)
+        guard let record = CKRecord(post: newPost) else {return}
+        publicDB.save(record) { (recordOptional, error) in
+            if let error = error{
+                print("there was an error in \(#function) :\(error) : \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            guard let record = recordOptional else {completion(nil); return}
+            guard let newPost = Post(ckrecord: record) else {completion(nil);return}
+            self.posts.append(newPost)
+            completion(newPost)
+            return
+        }
+    }
+    
+    func fetchPosts(completion: @escaping ([Post]) -> Void){
+        let predicate = NSPredicate(value: true)
+        let query = CKQuery(recordType: postKeys.postObjectKey, predicate: predicate)
+        publicDB.perform(query, inZoneWith: nil) { (unwrappedRecords, error) in
+            if let error = error{
+                print("there was an error in \(#function) :\(error) : \(error.localizedDescription)")
+                completion([])
+                return
+            }
+            guard let records = unwrappedRecords else {completion([]);return}
+            var newPosts = [Post]()
+            for record in records{
+                if let newPost = Post(ckrecord: record) {
+                    newPosts.append(newPost)
+                }
+            }
+            self.posts = newPosts
+            completion(newPosts)
+            return
+        }
+    }
+    
+    func fetchComments(for post: Post, completion: @escaping ([Comment]) -> Void){
+        
+        let postRefence = post.recordID
+        let predicate = NSPredicate(format: "%K == %@", commentKeys.postReferenceKey, postRefence)
+        let commentIDs = post.comments.compactMap({$0.ckRecordID})
+        let predicate2 = NSPredicate(format: "NOT(recordID IN %@)", commentIDs)
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, predicate2])
+        let query = CKQuery(recordType: "Comment", predicate: compoundPredicate)
+        publicDB.perform(query, inZoneWith: nil) { (records, error) in
+            if let error = error{
+                print("there was an error in \(#function) :\(error) : \(error.localizedDescription)")
+                completion([])
+                return
+            }
+            guard let records = records else {completion([]); return}
+            var newComments = [Comment]()
+            for record in records{
+                if let newComment = Comment(ckRecord: record, post: post){
+                    newComments.append(newComment)
+                }
+            }
+            post.comments = newComments
+            completion(newComments)
+            return
+        }
     }
 }

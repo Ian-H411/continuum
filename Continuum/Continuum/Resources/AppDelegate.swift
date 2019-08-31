@@ -5,7 +5,7 @@
 //  Created by Ian Hall on 8/27/19.
 //  Copyright © 2019 Ian Hall. All rights reserved.
 //
-
+import CloudKit
 import UIKit
 
 @UIApplicationMain
@@ -16,6 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        checkIfSignedInICloud { (success) in
+            let fetchedUserStatment = success ? "Successfully retrieved a logged in user" : "Failed to retrieve a logged in user"
+            print(fetchedUserStatment)
+        }
         return true
     }
 
@@ -40,7 +44,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
+    func checkIfSignedInICloud(completion: @escaping (Bool) -> Void){
+        CKContainer.default().accountStatus { (status, error) in
+            if let error = error{
+                print("there was an error in \(#function) :\(error) : \(error.localizedDescription)")
+                completion(false)
+                return
+            } else {
+                DispatchQueue.main.async {
+                    let tabBarController = self.window?.rootViewController
+                    let errorText = "sign into ICloud in Settings"
+                    switch status{
+                    case .available:
+                        completion(true)
+                    case .noAccount:
+                        tabBarController?.presentSimpleAlertWith(title: errorText, message: "no account found my dawg")
+                        completion(false)
+                    case .couldNotDetermine:
+                        tabBarController?.presentSimpleAlertWith(title: errorText, message: "there was an unknown error with your icloud account")
+                        completion(false)
+                    case .restricted:
+                        tabBarController?.presentSimpleAlertWith(title: errorText, message: "your icloud account is restricted")
+                        completion(false)
+                    default:
+                        tabBarController?.presentSimpleAlertWith(title: "unknown error", message: "now even ICloud knows whats going on if your seeing this")
+                        completion(false)
+                    }
+                }
+            }
+            
+        }
+    }
 
 }
 

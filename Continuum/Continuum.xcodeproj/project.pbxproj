@@ -18,6 +18,9 @@
 		2575668B2315C3F20077BF32 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2575668A2315C3F20077BF32 /* Comment.swift */; };
 		2575668D2315C4CE0077BF32 /* PostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2575668C2315C4CE0077BF32 /* PostController.swift */; };
 		257566912315CA860077BF32 /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 257566902315CA860077BF32 /* PostTableViewCell.swift */; };
+		257566942316F81F0077BF32 /* SearchableRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 257566932316F81F0077BF32 /* SearchableRecord.swift */; };
+		25756696231731A70077BF32 /* PhotoSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25756695231731A70077BF32 /* PhotoSelectorViewController.swift */; };
+		25A02F1A23187B4700D5DD26 /* ICloudAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A02F1923187B4700D5DD26 /* ICloudAlerts.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +37,9 @@
 		2575668A2315C3F20077BF32 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		2575668C2315C4CE0077BF32 /* PostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostController.swift; sourceTree = "<group>"; };
 		257566902315CA860077BF32 /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
+		257566932316F81F0077BF32 /* SearchableRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableRecord.swift; sourceTree = "<group>"; };
+		25756695231731A70077BF32 /* PhotoSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSelectorViewController.swift; sourceTree = "<group>"; };
+		25A02F1923187B4700D5DD26 /* ICloudAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudAlerts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +75,7 @@
 				2571A7092315BD8700F3FF47 /* UI */,
 				2571A70C2315BDA000F3FF47 /* Models */,
 				2571A70B2315BD9D00F3FF47 /* Views */,
+				257566922316F7F80077BF32 /* HelperFiles */,
 				2571A70A2315BD9B00F3FF47 /* Controllers */,
 				2571A7082315BD6C00F3FF47 /* Resources */,
 			);
@@ -107,6 +114,7 @@
 			children = (
 				2575668F2315C8EF0077BF32 /* Cells */,
 				2575668E2315C8DE0077BF32 /* Tables */,
+				25756695231731A70077BF32 /* PhotoSelectorViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -136,6 +144,15 @@
 				257566902315CA860077BF32 /* PostTableViewCell.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		257566922316F7F80077BF32 /* HelperFiles */ = {
+			isa = PBXGroup;
+			children = (
+				257566932316F81F0077BF32 /* SearchableRecord.swift */,
+				25A02F1923187B4700D5DD26 /* ICloudAlerts.swift */,
+			);
+			path = HelperFiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,9 +228,12 @@
 			files = (
 				2571A6F72315BCB200F3FF47 /* AppDelegate.swift in Sources */,
 				2575668B2315C3F20077BF32 /* Comment.swift in Sources */,
+				257566942316F81F0077BF32 /* SearchableRecord.swift in Sources */,
 				257566832315BFF00077BF32 /* PostListTableViewController.swift in Sources */,
 				257566912315CA860077BF32 /* PostTableViewCell.swift in Sources */,
 				257566872315C0B00077BF32 /* AddPostTableViewController.swift in Sources */,
+				25A02F1A23187B4700D5DD26 /* ICloudAlerts.swift in Sources */,
+				25756696231731A70077BF32 /* PhotoSelectorViewController.swift in Sources */,
 				2575668D2315C4CE0077BF32 /* PostController.swift in Sources */,
 				257566852315C0240077BF32 /* PostDetailTableViewController.swift in Sources */,
 				257566892315C0D10077BF32 /* Post.swift in Sources */,
